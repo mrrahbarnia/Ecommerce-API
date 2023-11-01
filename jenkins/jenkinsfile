@@ -1,0 +1,16 @@
+pipeline {
+    agent any
+
+    stages {
+        stage("Test") {
+            steps {
+                sh "docker-compose run --rm core sh -c 'pytest' "
+            }
+        }
+        stage("Lint") {
+            steps {
+                sh "docker-compose run --rm core sh -c 'flake8'"
+            }
+        }
+    }
+}
