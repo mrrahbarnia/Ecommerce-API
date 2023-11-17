@@ -5,70 +5,77 @@ import pytest
 
 from django.urls import reverse
 
-from rest_framework.test import APIClient
 from rest_framework import status
 
-from core.models.product import (
-    Category,
-    Brand,
-    Product
-)
-from product.api.v1.serializers import (
-    ProductSerializer,
-    CategorySerializer,
-    BrandSerializer
-)
+pytestmark = pytest.mark.django_db
 
 
-PRODUCT_LIST_URL = reverse('product-api:product-list')
-BRAND_LIST_URL = reverse('product-api:brand-list')
-CATEGORY_LIST_URL = reverse('product-api:category-list')
+class TestCategoryEndpoints:
+    """Test Categories endpoints."""
+    CATEGORY_LIST_URL = reverse('product-api:category-list')
+
+    def test_get_category_list_response_200(self, category_factory, client):
+        """Test get method for listing categories."""
+        category_factory.create_batch(4)
+
+        response = client.get(self.CATEGORY_LIST_URL)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 4
 
 
-@pytest.fixture
-def client():
-    """Returning a client."""
-    client = APIClient()
-    return client
+class TestBrandEndpoints:
+    """Test Brand endpoints."""
+    BRAND_LIST_URL = reverse('product-api:brand-list')
+
+    def test_get_brand_list_response_200(self, brand_factory, client):
+        """Test get method for listing brands."""
+        brand_factory.create_batch(4)
+
+        response = client.get(self.BRAND_LIST_URL)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 4
 
 
-@pytest.mark.django_db
-class TestEndPoints:
-    """Test API's endpoints belong to product app."""
+class TestProductEndpoints:
+    """Test Products endpoints."""
+    PRODUCT_LIST_URL = reverse('product-api:product-list')
 
-    def test_list_product_response_200(self, client):
-        """Test listing products successfully with response 200."""
-        sample_brand = Brand.objects.create(name='Test')
-        Product.objects.create(name='Test1', brand_id=sample_brand.id)
-        Product.objects.create(name='Test2', brand_id=sample_brand.id)
+    def test_get_product_list_response_200(self, product_factory, client):
+        """Test get method for listing products."""
+        product_factory.create_batch(4)
 
-        res = client.get(PRODUCT_LIST_URL)
-        serializer = ProductSerializer(res.data, many=True)
+        response = client.get(self.PRODUCT_LIST_URL)
 
-        assert res.status_code == status.HTTP_200_OK
-        assert res.data == serializer.data
-        assert len(res.data) == 2
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 4
 
-    def test_list_brand_response_200(self, client):
-        """Test listing brands successfully with response 200."""
-        Brand.objects.create(name='Test1')
-        Brand.objects.create(name='Test2')
+    def test_get_product_by_associated_slug(self, product_factory, client):
+        """Test get products by a specific category."""
+        product_factory(slug='Test-slug1')
+        sample_product = product_factory(slug='Test-slug2')
 
-        res = client.get(BRAND_LIST_URL)
-        serializer = BrandSerializer(res.data, many=True)
+        response = client.get(
+            f'{self.PRODUCT_LIST_URL}{sample_product.slug}/'
+        )
 
-        assert res.status_code == status.HTTP_200_OK
-        assert res.data == serializer.data
-        assert len(res.data) == 2
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 1
+        assert response.data[0]['slug'] == sample_product.slug
 
-    def test_list_categories_response_200(self, client):
-        """Test listing categories successfully with response 200."""
-        Category.objects.create(name='Test1')
-        Category.objects.create(name='Test2')
+    def test_list_products_by_category_slug(
+            self, category_factory, product_factory, client
+            ):
+        """Test returning products filtered by their categories slug."""
+        sample_category1 = category_factory(slug='test-slug1')
+        sample_category2 = category_factory(slug='test-slug2')
+        product_factory(category=sample_category1)
+        product_factory(category=sample_category2)
 
-        res = client.get(CATEGORY_LIST_URL)
-        serializer = CategorySerializer(res.data, many=True)
+        response = client.get(
+            f'{self.PRODUCT_LIST_URL}category/{sample_category1.slug}/'
+        )
 
-        assert res.status_code == status.HTTP_200_OK
-        assert res.data == serializer.data
-        assert len(res.data) == 2
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data) == 1
