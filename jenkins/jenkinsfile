@@ -2,14 +2,22 @@ pipeline {
     agent any
 
     stages {
-        stage("Test") {
+        stage('Checkout') {
             steps {
-                sh "docker-compose run --rm core sh -c 'pytest' "
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/mrrahbarnia/Ecommerce-API.git']])
             }
         }
-        stage("Lint") {
+        stage('Build') {
             steps {
-                sh "docker-compose run --rm core sh -c 'flake8'"
+                git branch: 'main', url: 'https://github.com/mrrahbarnia/Ecommerce-API.git'
+            }
+        }
+        stage('Test & Lint') {
+            steps {
+                sh '''
+                docker container exec backend sh -c 'pytest'
+                docker container exec backend sh -c 'flake8'
+                '''
             }
         }
     }

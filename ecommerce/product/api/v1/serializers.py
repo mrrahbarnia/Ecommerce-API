@@ -8,7 +8,9 @@ from core.models.product import (
     Category,
     Brand,
     ProductLine,
-    ProductImage
+    ProductImage,
+    Attribute,
+    AttributeValue
 )
 
 
@@ -30,9 +32,27 @@ class ProductImageSerializer(serializers.ModelSerializer):
         )
 
 
+class AttributeSerializer(serializers.ModelSerializer):
+    """Converting data to json format for the Attribute model."""
+
+    class Meta:
+        model = Attribute
+        fields = ('name', )
+
+
+class AttributeValueSerializer(serializers.ModelSerializer):
+    """Converting data to json format for the AttributeValue model."""
+    attribute = AttributeSerializer(many=False)
+
+    class Meta:
+        model = AttributeValue
+        fields = ('attribute', 'value')
+
+
 class ProductLineSerializer(serializers.ModelSerializer):
     """Converting data to json format for the ProductLine model."""
     product_image = ProductImageSerializer(many=True)
+    attribute_value = AttributeValueSerializer(many=True)
 
     class Meta:
         model = ProductLine
@@ -41,8 +61,28 @@ class ProductLineSerializer(serializers.ModelSerializer):
             'price',
             'sku',
             'stock_qty',
-            'product_image'
+            'product_image',
+            'attribute_value',
         )
+
+    def to_representation(self, instance):
+        """For representing more understandable data."""
+        data = super().to_representation(instance)
+        prod_img = []
+        attr_values = {}
+
+        images = data.pop('product_image')
+        for _ in images:
+            prod_img.append(_['order'])
+
+        av_data = data.pop('attribute_value')
+        print(av_data)
+        for _ in av_data:
+            attr_values.update({_['attribute']['name']: _['value']})
+
+        data.update({'product_image': prod_img})
+        data.update({'specifications': attr_values})
+        return data
 
 
 class BrandSerializer(serializers.ModelSerializer):

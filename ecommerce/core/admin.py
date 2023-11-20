@@ -10,7 +10,10 @@ from core.models.product import (
     Category,
     Product,
     ProductLine,
-    ProductImage
+    ProductImage,
+    Attribute,
+    AttributeValue,
+    ProductType
 )
 
 
@@ -36,10 +39,16 @@ class ProductImageInline(admin.TabularInline):
     model = ProductImage
 
 
+class AttributeValueInline(admin.TabularInline):
+    """To adding AttributeValues instances to a
+    ProductLine instance while creating it in admin site."""
+    model = AttributeValue.product_line_attribute_value.through
+
+
 @admin.register(ProductLine)
 class ProductLineAdmin(admin.ModelAdmin):
     """Exhibiting ProductLine's instances in admin site."""
-    inlines = [ProductImageInline]
+    inlines = [ProductImageInline, AttributeValueInline]
 
 
 class ProductLineInline(EditLinkInline, admin.TabularInline):
@@ -55,5 +64,16 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductLineInline]
 
 
+class AttributeInline(admin.TabularInline):
+    model = Attribute.product_type_attribute.through
+
+
+class ProductTypeAdmin(admin.ModelAdmin):
+    inlines = [AttributeInline]
+
+
+admin.site.register(ProductType, ProductTypeAdmin)
 admin.site.register(Brand)
 admin.site.register(Category)
+admin.site.register(Attribute)
+admin.site.register(AttributeValue)

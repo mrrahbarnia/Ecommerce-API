@@ -9,7 +9,8 @@ from core.models.product import (
     Brand,
     Product,
     ProductLine,
-    ProductImage
+    ProductImage,
+    ProductType
 )
 
 
@@ -49,6 +50,15 @@ class ProductFactory(factory.django.DjangoModelFactory):
     is_active = True
 
 
+class ProductTypeFactory(factory.django.DjangoModelFactory):
+    """Generating data for the ProductType model tests."""
+
+    class Meta:
+        model = ProductType
+
+    name = Faker().name()
+
+
 class ProductLineFactory(factory.django.DjangoModelFactory):
     """Generating data for the ProductLine model tests."""
 
@@ -60,6 +70,7 @@ class ProductLineFactory(factory.django.DjangoModelFactory):
     stock_qty = Faker().pyint()
     product = factory.SubFactory(ProductFactory)
     is_active = True
+    product_type = factory.SubFactory(ProductTypeFactory)
 
 
 class ProductImageFactory(factory.django.DjangoModelFactory):
