@@ -63,6 +63,10 @@ class Product(models.Model):
         Category, on_delete=models.SET_NULL, null=True, blank=True
     )
     is_active = models.BooleanField(default=False)
+    product_type = models.ForeignKey(
+        'ProductType', related_name='product_product_type',
+        on_delete=models.PROTECT
+    )
 
     objects = IsActiveQuerySet.as_manager()
 
@@ -153,10 +157,6 @@ class ProductLine(models.Model):
     attribute_value = models.ManyToManyField(
         AttributeValue, through='ProductLineAttributeValue',
         related_name='product_line_attribute_value'
-    )
-    product_type = models.ForeignKey(
-        ProductType, related_name='product_line_product_type',
-        on_delete=models.PROTECT
     )
 
     objects = IsActiveQuerySet.as_manager()

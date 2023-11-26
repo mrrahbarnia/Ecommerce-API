@@ -37,7 +37,7 @@ class AttributeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attribute
-        fields = ('name', )
+        fields = ('id', 'name')
 
 
 class AttributeValueSerializer(serializers.ModelSerializer):
@@ -76,9 +76,8 @@ class ProductLineSerializer(serializers.ModelSerializer):
             prod_img.append(_['order'])
 
         av_data = data.pop('attribute_value')
-        print(av_data)
         for _ in av_data:
-            attr_values.update({_['attribute']['name']: _['value']})
+            attr_values.update({_['attribute']['id']: _['value']})
 
         data.update({'product_image': prod_img})
         data.update({'specifications': attr_values})
@@ -100,10 +99,28 @@ class ProductSerializer(serializers.ModelSerializer):
         source='category.name', required=False
     )
     product_line = ProductLineSerializer(many=True)
+    attributes = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         fields = [
             'name', 'slug', 'description', 'brand_name',
-            'category_name', 'product_line'
+            'category_name', 'attributes', 'product_line'
             ]
+
+    def get_attributes(self, obj):
+        attributes = Attribute.objects.filter(
+            product_type_attribute__product_product_type=obj.id
+            )
+        return AttributeSerializer(attributes, many=True).data
+
+    def to_representation(self, instance):
+
+        data = super().to_representation(instance)
+        type_specifications = {}
+
+        attributes = data.pop('attributes')
+        for _ in attributes:
+            type_specifications.update({_['id']: _['name']})
+        data.update({'type specifications': type_specifications})
+        return data

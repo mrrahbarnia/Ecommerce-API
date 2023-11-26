@@ -10,7 +10,9 @@ from core.models.product import (
     Product,
     ProductLine,
     ProductImage,
-    ProductType
+    ProductType,
+    Attribute,
+    AttributeValue
 )
 
 
@@ -35,6 +37,23 @@ class CategoryFactory(factory.django.DjangoModelFactory):
     is_active = True
 
 
+class ProductTypeFactory(factory.django.DjangoModelFactory):
+    """Generating data for the ProductType model tests."""
+
+    class Meta:
+        model = ProductType
+
+    name = Faker().name()
+
+    @factory.post_generation
+    def attribute(self, create, extracted, **kwargs):
+        """Generating relations for the
+        many to many field,it's not mandatory."""
+        if not create or not extracted:
+            return
+        self.attribute.add(*extracted)
+
+
 class ProductFactory(factory.django.DjangoModelFactory):
     """Generating data for the Product model tests."""
 
@@ -48,15 +67,7 @@ class ProductFactory(factory.django.DjangoModelFactory):
     brand = factory.SubFactory(BrandFactory)
     category = factory.SubFactory(CategoryFactory)
     is_active = True
-
-
-class ProductTypeFactory(factory.django.DjangoModelFactory):
-    """Generating data for the ProductType model tests."""
-
-    class Meta:
-        model = ProductType
-
-    name = Faker().name()
+    product_type = factory.SubFactory(ProductTypeFactory)
 
 
 class ProductLineFactory(factory.django.DjangoModelFactory):
@@ -70,7 +81,14 @@ class ProductLineFactory(factory.django.DjangoModelFactory):
     stock_qty = Faker().pyint()
     product = factory.SubFactory(ProductFactory)
     is_active = True
-    product_type = factory.SubFactory(ProductTypeFactory)
+
+    @factory.post_generation
+    def attribute_value(self, create, extracted, **kwargs):
+        """Generating relations for the
+        many to many field,it's not mandatory."""
+        if not create or not extracted:
+            return
+        self.attribute_value.add(*extracted)
 
 
 class ProductImageFactory(factory.django.DjangoModelFactory):
@@ -82,3 +100,21 @@ class ProductImageFactory(factory.django.DjangoModelFactory):
     alternative_text = Faker().paragraph(nb_sentences=1)
     url = Faker().url()
     product_line = factory.SubFactory(ProductLineFactory)
+
+
+class AttributeFactory(factory.django.DjangoModelFactory):
+    """Generating data for the Attribute model tests."""
+
+    class Meta:
+        model = Attribute
+    name = Faker().name()
+    description = Faker().paragraph(nb_sentences=1)
+
+
+class AttributeValueFactory(factory.django.DjangoModelFactory):
+    """Generating data for the AttributeValue model tests."""
+
+    class Meta:
+        model = AttributeValue
+    value = Faker().name()
+    attribute = factory.SubFactory(AttributeFactory)
