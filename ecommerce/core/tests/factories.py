@@ -6,24 +6,17 @@ from faker import Faker
 
 from core.models.product import (
     Category,
-    Brand,
     Product,
     ProductLine,
     ProductImage,
     ProductType,
     Attribute,
-    AttributeValue
+    AttributeValue,
+    ProductLineAttributeValue,
+    ProductAttributeValue
 )
 
-
-class BrandFactory(factory.django.DjangoModelFactory):
-    """Generating data for the Brand model tests."""
-
-    class Meta:
-        model = Brand
-
-    name = factory.Sequence(lambda n: '%s' % (Faker().name()))
-    is_active = True
+fake = Faker()
 
 
 class CategoryFactory(factory.django.DjangoModelFactory):
@@ -32,9 +25,8 @@ class CategoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Category
 
-    name = factory.Sequence(lambda n: '%s' % (Faker().name()))
+    name = factory.Sequence(lambda n: '%s' % (fake.name()))
     slug = name
-    is_active = True
 
 
 class ProductTypeFactory(factory.django.DjangoModelFactory):
@@ -43,7 +35,7 @@ class ProductTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ProductType
 
-    name = Faker().name()
+    name = factory.Sequence(lambda n: '%s' % (Faker().name()))
 
     @factory.post_generation
     def attribute(self, create, extracted, **kwargs):
@@ -60,14 +52,21 @@ class ProductFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Product
 
-    name = 'Green shoe'
-    slug = 'Green-shoe'
-    description = Faker().paragraph(nb_sentences=1)
-    is_digital = Faker().pybool()
-    brand = factory.SubFactory(BrandFactory)
+    name = factory.Sequence(lambda n: ('name_%s') % n)
+    slug = factory.Sequence(lambda n: ('slug_%s' % n))
+    pid = factory.Sequence(lambda n: '%s' % (fake.pyint()))
+    description = fake.paragraph(nb_sentences=1)
     category = factory.SubFactory(CategoryFactory)
     is_active = True
     product_type = factory.SubFactory(ProductTypeFactory)
+
+    @factory.post_generation
+    def attribute_value(self, create, extracted, **kwargs):
+        """Generating relations for the
+        many to many field,it's not mandatory."""
+        if not create or not extracted:
+            return
+        self.attribute_value.add(*extracted)
 
 
 class ProductLineFactory(factory.django.DjangoModelFactory):
@@ -77,10 +76,11 @@ class ProductLineFactory(factory.django.DjangoModelFactory):
         model = ProductLine
 
     price = 10.00
-    sku = str(Faker().pyint())
+    sku = factory.Sequence(lambda n: '%s' % (fake.pyint()))
     stock_qty = Faker().pyint()
     product = factory.SubFactory(ProductFactory)
-    is_active = True
+    weight = 10.00
+    product_type = factory.SubFactory(ProductTypeFactory)
 
     @factory.post_generation
     def attribute_value(self, create, extracted, **kwargs):
@@ -96,7 +96,6 @@ class ProductImageFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = ProductImage
-    name = 'Sample name'
     alternative_text = Faker().paragraph(nb_sentences=1)
     url = Faker().url()
     product_line = factory.SubFactory(ProductLineFactory)
@@ -107,7 +106,7 @@ class AttributeFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Attribute
-    name = Faker().name()
+    name = factory.Sequence(lambda n: ('name_%s') % n)
     description = Faker().paragraph(nb_sentences=1)
 
 
@@ -118,3 +117,28 @@ class AttributeValueFactory(factory.django.DjangoModelFactory):
         model = AttributeValue
     value = Faker().name()
     attribute = factory.SubFactory(AttributeFactory)
+
+
+class ProductLineAttributeValueFactory(
+    factory.django.DjangoModelFactory
+):
+    """Generating data for the
+    ProductLineAttributeValue model tests."""
+
+    class Meta:
+        model = ProductLineAttributeValue
+
+    product_line = factory.SubFactory(ProductLineFactory)
+    attribute_value = factory.SubFactory(AttributeValueFactory)
+
+
+class ProductAttributeValueFactory(
+    factory.django.DjangoModelFactory
+):
+    """Generating data for the ProductAttributeValue model tests."""
+
+    class Meta:
+        model = ProductAttributeValue
+
+    product = factory.SubFactory(ProductFactory)
+    attribute_value = factory.SubFactory(AttributeValueFactory)

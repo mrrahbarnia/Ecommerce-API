@@ -6,7 +6,6 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from core.models.product import (
-    Brand,
     Category,
     Product,
     ProductLine,
@@ -73,7 +72,6 @@ class ProductTypeAdmin(admin.ModelAdmin):
 
 
 admin.site.register(ProductType, ProductTypeAdmin)
-admin.site.register(Brand)
 admin.site.register(Category)
 admin.site.register(Attribute)
 admin.site.register(AttributeValue)

@@ -6,7 +6,6 @@ from rest_framework import serializers
 from core.models.product import (
     Product,
     Category,
-    Brand,
     ProductLine,
     ProductImage,
     Attribute,
@@ -84,17 +83,8 @@ class ProductLineSerializer(serializers.ModelSerializer):
         return data
 
 
-class BrandSerializer(serializers.ModelSerializer):
-    """Converting data to json format for the Brand model."""
-
-    class Meta:
-        model = Brand
-        exclude = ['id', 'is_active']
-
-
 class ProductSerializer(serializers.ModelSerializer):
     """Converting data to json format for the Product model."""
-    brand_name = serializers.CharField(source='brand.name')
     category_name = serializers.CharField(
         source='category.name', required=False
     )
@@ -104,18 +94,18 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
-            'name', 'slug', 'description', 'brand_name',
-            'category_name', 'attributes', 'product_line'
+            'name', 'slug', 'description', 'category_name',
+            'attributes', 'product_line'
             ]
 
     def get_attributes(self, obj):
         attributes = Attribute.objects.filter(
-            product_type_attribute__product_product_type=obj.id
+            product_type_attribute=obj.id
             )
         return AttributeSerializer(attributes, many=True).data
 
     def to_representation(self, instance):
-
+        """For representing more understandable data."""
         data = super().to_representation(instance)
         type_specifications = {}
 

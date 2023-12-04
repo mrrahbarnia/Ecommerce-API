@@ -9,12 +9,10 @@ from rest_framework.decorators import action
 
 from .serializers import (
     CategorySerializer,
-    BrandSerializer,
     ProductSerializer
 )
 from core.models.product import (
     Category,
-    Brand,
     Product
 )
 
@@ -25,16 +23,6 @@ class CategoryViewSet(viewsets.ViewSet):
     serializer_class = CategorySerializer
 
     def list(self, request, *args, **kwargs):
-        serializer = self.serializer_class(self.queryset, many=True)
-        return Response(serializer.data)
-
-
-class BrandViewSet(viewsets.ViewSet):
-    """Returning a list of all brands."""
-    queryset = Brand.objects.active()
-    serializer_class = BrandSerializer
-
-    def list(self, request):
         serializer = self.serializer_class(self.queryset, many=True)
         return Response(serializer.data)
 
@@ -54,7 +42,7 @@ class ProductViewSet(viewsets.ViewSet):
         """Returning a product with the assigned slug."""
         serializer = self.serializer_class(
             self.queryset.filter(slug=slug)
-            .select_related('brand', 'category')
+            .select_related('category')
             .prefetch_related(
                 Prefetch('product_line__product_image'))
             .prefetch_related(

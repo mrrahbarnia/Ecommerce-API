@@ -16,23 +16,9 @@ class TestCategoryEndpoints:
 
     def test_get_category_list_response_200(self, category_factory, client):
         """Test get method for listing categories."""
-        category_factory.create_batch(4)
+        category_factory.create_batch(4, is_active=True)
 
         response = client.get(self.CATEGORY_LIST_URL)
-
-        assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 4
-
-
-class TestBrandEndpoints:
-    """Test Brand endpoints."""
-    BRAND_LIST_URL = reverse('product-api:brand-list')
-
-    def test_get_brand_list_response_200(self, brand_factory, client):
-        """Test get method for listing brands."""
-        brand_factory.create_batch(4)
-
-        response = client.get(self.BRAND_LIST_URL)
 
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 4
