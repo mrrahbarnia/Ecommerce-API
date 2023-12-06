@@ -9,7 +9,8 @@ from django.core.exceptions import ObjectDoesNotExist
 class OrderField(models.PositiveIntegerField):
     """Custom field for generating order number automatically
     with a custom attribute named unique_for_field."""
-    description = 'Ordering field on a specific field.'
+
+    description = "Ordering field on a specific field."
 
     def __init__(self, unique_for_field=None, *args, **kwargs):
         self.unique_for_field = unique_for_field
@@ -35,10 +36,10 @@ class OrderField(models.PositiveIntegerField):
         ]:
             return [
                 checks.Error(
-                    '''
+                    """
                     OrderField entered does not
                     match an existing model field.
-                    '''
+                    """
                 )
             ]
         return []

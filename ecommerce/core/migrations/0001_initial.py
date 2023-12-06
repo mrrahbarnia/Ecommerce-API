@@ -7,160 +7,333 @@ import mptt.fields
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Attribute',
+            name="Attribute",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, unique=True)),
-                ('description', models.TextField(blank=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, unique=True)),
+                ("description", models.TextField(blank=True)),
             ],
         ),
         migrations.CreateModel(
-            name='AttributeValue',
+            name="AttributeValue",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('value', models.CharField(max_length=100)),
-                ('attribute', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='attribute', to='core.attribute')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("value", models.CharField(max_length=100)),
+                (
+                    "attribute",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="attribute",
+                        to="core.attribute",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=235, unique=True)),
-                ('slug', models.CharField(max_length=255, unique=True)),
-                ('is_active', models.BooleanField(default=False)),
-                ('lft', models.PositiveIntegerField(editable=False)),
-                ('rght', models.PositiveIntegerField(editable=False)),
-                ('tree_id', models.PositiveIntegerField(db_index=True, editable=False)),
-                ('level', models.PositiveIntegerField(editable=False)),
-                ('parent', mptt.fields.TreeForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='core.category')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=235, unique=True)),
+                ("slug", models.CharField(max_length=255, unique=True)),
+                ("is_active", models.BooleanField(default=False)),
+                ("lft", models.PositiveIntegerField(editable=False)),
+                ("rght", models.PositiveIntegerField(editable=False)),
+                ("tree_id", models.PositiveIntegerField(db_index=True, editable=False)),
+                ("level", models.PositiveIntegerField(editable=False)),
+                (
+                    "parent",
+                    mptt.fields.TreeForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="core.category",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Product',
+            name="Product",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=230, unique=True)),
-                ('slug', models.CharField(max_length=255, unique=True)),
-                ('pid', models.CharField(max_length=10, unique=True)),
-                ('description', models.TextField(blank=True)),
-                ('is_digital', models.BooleanField(default=False)),
-                ('is_active', models.BooleanField(default=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=230, unique=True)),
+                ("slug", models.CharField(max_length=255, unique=True)),
+                ("pid", models.CharField(max_length=10, unique=True)),
+                ("description", models.TextField(blank=True)),
+                ("is_digital", models.BooleanField(default=False)),
+                ("is_active", models.BooleanField(default=False)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
-            name='ProductLine',
+            name="ProductLine",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('price', models.DecimalField(decimal_places=2, max_digits=5)),
-                ('sku', models.CharField(max_length=10, unique=True)),
-                ('stock_qty', models.IntegerField()),
-                ('is_active', models.BooleanField(default=False)),
-                ('order', core.fields.OrderField(blank=True)),
-                ('weight', models.FloatField()),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("price", models.DecimalField(decimal_places=2, max_digits=5)),
+                ("sku", models.CharField(max_length=10, unique=True)),
+                ("stock_qty", models.IntegerField()),
+                ("is_active", models.BooleanField(default=False)),
+                ("order", core.fields.OrderField(blank=True)),
+                ("weight", models.FloatField()),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
-            name='ProductType',
+            name="ProductType",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, unique=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, unique=True)),
             ],
         ),
         migrations.CreateModel(
-            name='ProductTypeAttribute',
+            name="ProductTypeAttribute",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('attribute', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='product_type_attribute_at', to='core.attribute')),
-                ('product_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='product_type_attribute_pt', to='core.producttype')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "attribute",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="product_type_attribute_at",
+                        to="core.attribute",
+                    ),
+                ),
+                (
+                    "product_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="product_type_attribute_pt",
+                        to="core.producttype",
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('product_type', 'attribute')},
+                "unique_together": {("product_type", "attribute")},
             },
         ),
         migrations.AddField(
-            model_name='producttype',
-            name='attribute',
-            field=models.ManyToManyField(related_name='product_type_attribute', through='core.ProductTypeAttribute', to='core.attribute'),
+            model_name="producttype",
+            name="attribute",
+            field=models.ManyToManyField(
+                related_name="product_type_attribute",
+                through="core.ProductTypeAttribute",
+                to="core.attribute",
+            ),
         ),
         migrations.AddField(
-            model_name='producttype',
-            name='parent',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='core.producttype'),
+            model_name="producttype",
+            name="parent",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="core.producttype",
+            ),
         ),
         migrations.CreateModel(
-            name='ProductLineAttributeValue',
+            name="ProductLineAttributeValue",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('attribute_value', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='product_attribute_value_av', to='core.attributevalue')),
-                ('product_line', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='product_attribute_value_pr', to='core.productline')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "attribute_value",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="product_attribute_value_av",
+                        to="core.attributevalue",
+                    ),
+                ),
+                (
+                    "product_line",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="product_attribute_value_pr",
+                        to="core.productline",
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('product_line', 'attribute_value')},
+                "unique_together": {("product_line", "attribute_value")},
             },
         ),
         migrations.AddField(
-            model_name='productline',
-            name='attribute_value',
-            field=models.ManyToManyField(related_name='product_line_attribute_value', through='core.ProductLineAttributeValue', to='core.attributevalue'),
+            model_name="productline",
+            name="attribute_value",
+            field=models.ManyToManyField(
+                related_name="product_line_attribute_value",
+                through="core.ProductLineAttributeValue",
+                to="core.attributevalue",
+            ),
         ),
         migrations.AddField(
-            model_name='productline',
-            name='product',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='product_line', to='core.product'),
+            model_name="productline",
+            name="product",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="product_line",
+                to="core.product",
+            ),
         ),
         migrations.AddField(
-            model_name='productline',
-            name='product_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='product_line_type', to='core.producttype'),
+            model_name="productline",
+            name="product_type",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="product_line_type",
+                to="core.producttype",
+            ),
         ),
         migrations.CreateModel(
-            name='ProductImage',
+            name="ProductImage",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('alternative_text', models.CharField(max_length=100)),
-                ('url', models.ImageField(default='test.jpg', upload_to=None)),
-                ('order', core.fields.OrderField(blank=True)),
-                ('product_line', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='product_image', to='core.productline')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("alternative_text", models.CharField(max_length=100)),
+                ("url", models.ImageField(default="test.jpg", upload_to=None)),
+                ("order", core.fields.OrderField(blank=True)),
+                (
+                    "product_line",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="product_image",
+                        to="core.productline",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='ProductAttributeValue',
+            name="ProductAttributeValue",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('attribute_value', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='attribute_value_product_attribute_value', to='core.attributevalue')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='product_product_attribute_value', to='core.product')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "attribute_value",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="attribute_value_product_attribute_value",
+                        to="core.attributevalue",
+                    ),
+                ),
+                (
+                    "product",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="product_product_attribute_value",
+                        to="core.product",
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('product', 'attribute_value')},
+                "unique_together": {("product", "attribute_value")},
             },
         ),
         migrations.AddField(
-            model_name='product',
-            name='attribute_value',
-            field=models.ManyToManyField(related_name='product_attribute_value', through='core.ProductAttributeValue', to='core.attributevalue'),
+            model_name="product",
+            name="attribute_value",
+            field=models.ManyToManyField(
+                related_name="product_attribute_value",
+                through="core.ProductAttributeValue",
+                to="core.attributevalue",
+            ),
         ),
         migrations.AddField(
-            model_name='product',
-            name='category',
-            field=mptt.fields.TreeForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.category'),
+            model_name="product",
+            name="category",
+            field=mptt.fields.TreeForeignKey(
+                on_delete=django.db.models.deletion.PROTECT, to="core.category"
+            ),
         ),
         migrations.AddField(
-            model_name='product',
-            name='product_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='product_type', to='core.producttype'),
+            model_name="product",
+            name="product_type",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="product_type",
+                to="core.producttype",
+            ),
         ),
     ]

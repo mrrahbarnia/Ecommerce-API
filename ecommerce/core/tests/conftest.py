@@ -15,7 +15,7 @@ from .factories import (
     AttributeFactory,
     AttributeValueFactory,
     ProductAttributeValueFactory,
-    ProductLineAttributeValueFactory
+    ProductLineAttributeValueFactory,
 )
 
 register(CategoryFactory)

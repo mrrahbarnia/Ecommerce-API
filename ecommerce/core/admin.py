@@ -12,17 +12,18 @@ from core.models.product import (
     ProductImage,
     Attribute,
     AttributeValue,
-    ProductType
+    ProductType,
 )
 
 
 class EditLinkInline(object):
     """Adding edit inline button for
     ProductLine instances for adding images."""
+
     def edit(self, instance):
         url = reverse(
-            f'admin:{instance._meta.app_label}_{instance._meta.model_name}_change', # noqa
-            args=[instance.pk]
+            f"admin:{instance._meta.app_label}_{instance._meta.model_name}_change",  # noqa
+            args=[instance.pk],
         )
         if instance.pk:
             """If there was any instances."""
@@ -35,32 +36,44 @@ class EditLinkInline(object):
 class ProductImageInline(admin.TabularInline):
     """To adding ProductImage's instances to a
     ProductLine instance while creating it in admin site."""
+
     model = ProductImage
 
 
 class AttributeValueInline(admin.TabularInline):
     """To adding AttributeValues instances to a
     ProductLine instance while creating it in admin site."""
+
     model = AttributeValue.product_line_attribute_value.through
+
+
+class AttributeValueProductInline(admin.TabularInline):
+    """To adding AttributeValues instances to a
+    ProductLine instance while creating it in admin site."""
+
+    model = AttributeValue.product_attribute_value.through
 
 
 @admin.register(ProductLine)
 class ProductLineAdmin(admin.ModelAdmin):
     """Exhibiting ProductLine's instances in admin site."""
+
     inlines = [ProductImageInline, AttributeValueInline]
 
 
 class ProductLineInline(EditLinkInline, admin.TabularInline):
     """To adding ProductLine's instances to a
     Product instance while creating it in admin site."""
+
     model = ProductLine
-    readonly_fields = ('edit',)
+    readonly_fields = ("edit",)
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     """Exhibiting Product's instances in admin site."""
-    inlines = [ProductLineInline]
+
+    inlines = [ProductLineInline, AttributeValueProductInline]
 
 
 class AttributeInline(admin.TabularInline):
