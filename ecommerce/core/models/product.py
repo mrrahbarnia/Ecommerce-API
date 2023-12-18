@@ -1,12 +1,24 @@
 """
 Product app models.
 """
+import uuid
+import os
+
 from django.db import models
 from django.core.exceptions import ValidationError
 
 from mptt.models import TreeForeignKey, MPTTModel
 
 from core.fields import OrderField
+
+def product_image_file_path(instance, filename):
+    """Generating a file path for a new profile image."""
+    ext = os.path.splitext (filename)[1]
+    unique_name = uuid.uuid4 ()
+    filename = f'{unique_name}{ext}'
+
+    path = os.path. join('uploads', 'product', filename)
+    return path
 
 
 class IsActiveQuerySet(models.QuerySet):
@@ -193,7 +205,9 @@ class ProductImage(models.Model):
     """This class defines all attributes of the Image model."""
 
     alternative_text = models.CharField(max_length=100)
-    url = models.ImageField(upload_to=None, default="test.jpg")
+    url = models.ImageField(
+        upload_to=product_image_file_path, default="test.jpg"
+    )
     product_line = models.ForeignKey(
         ProductLine, related_name="product_image", on_delete=models.CASCADE
     )

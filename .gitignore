@@ -161,3 +161,7 @@ cython_debug/
 schema.yml
 scratch_pad.py
 jenkins-home
+uploads
+jenkins_home
+
+

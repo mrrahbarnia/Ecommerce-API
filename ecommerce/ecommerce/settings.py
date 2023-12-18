@@ -135,3 +135,7 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {"TITLE": "Django ecommerce project"}
+
+
+# Custom user model config
+AUTH_USER_MODEL = 'core.User'

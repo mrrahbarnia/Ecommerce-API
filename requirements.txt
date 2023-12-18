@@ -34,3 +34,4 @@ sqlparse==0.4.4
 typing_extensions==4.8.0
 uritemplate==4.1.1
 black==23.11.0
+djangorestframework-simplejwt==5.3.1
